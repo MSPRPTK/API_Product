@@ -12,3 +12,12 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://mongo:27017/votre_base_de_données', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Connexion à MongoDB établie'))
+.catch(err => console.error('Erreur de connexion à MongoDB :', err));
