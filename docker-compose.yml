@@ -10,13 +10,9 @@ services:
       - backend
 
   nodejs:
-
     build:
-      context: .
       dockerfile: Dockerfile
-    container_name: nodejs
-    ports:
-      - "3000:3000"
+
     networks:
       - backend
     depends_on:
