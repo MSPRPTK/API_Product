@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use('/product', productRoutes);
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/db_product')
+mongoose.connect(process.env.MONGO_URL || 'mongodb://mongodb:27017/db_product')
    .then(() => {
        console.log('Connected to MongoDB');
    }).catch((error) => {
