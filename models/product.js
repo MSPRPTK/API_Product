@@ -7,7 +7,7 @@ const detailProductSchema = new mongoose.Schema({
 });
 
 const productSchema = new mongoose.Schema({
-    id: { type: Number, required: true, unique: true },
+    id: { type: Number, unique: true },
     creationDate: { type: Date, default: Date.now },
     productName: { type: String, required: true },
     stock: { type: Number, required: true },
