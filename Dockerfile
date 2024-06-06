@@ -1,17 +1,20 @@
-# Utiliser une image Node.js officielle avec une version spécifique
-FROM node:21.7.3
+# Utiliser l'image officielle de Node.js comme base
+FROM node:16.0.0
 
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /usr/src/app
 
-# Installer git
-RUN apt-get update && apt-get install -y git
+# Copier package.json et package-lock.json (si disponible)
+COPY package*.json ./
 
-# Installer les dépendances du projet
+# Installer les dépendances
 RUN npm install
 
-# Exposer le port sur lequel votre application va fonctionner
-EXPOSE 3502
+# Copier le reste du code de l'application
+COPY . .
 
-# Définir la commande pour démarrer l'application
-CMD ["npm", "start"]
+# Exposer le port sur lequel votre application fonctionnera
+EXPOSE 3000
+
+# Commande pour exécuter votre application
+CMD ["node", "app.js"]
