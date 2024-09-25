@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const detailProductSchema = new mongoose.Schema({
     description: String,
@@ -35,4 +35,4 @@ productSchema.pre('save', async function(next) {
 
 const Product = mongoose.model('Product', productSchema);
 
-module.exports = Product;
+export default Product; // Change to export default
