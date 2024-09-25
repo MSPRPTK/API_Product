@@ -41,7 +41,6 @@ describe('Test Product Routes', () => {
     expect(res).to.have.status(400);
   });
 
-  // Additional Test: Invalid data type for fields
   it('should return 400 when creating a product with invalid field types', async () => {
     const invalidProduct = {
       productName: 'Invalid Product',
@@ -96,7 +95,6 @@ describe('Test Product Routes', () => {
     expect(res.body).to.have.property('stock', 30);
   });
 
-  // Additional Test: Updating product with invalid field types
   it('should return 400 when updating product with invalid data types', async () => {
     const invalidUpdate = { stock: 'invalidNumber' };
 
