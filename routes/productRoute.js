@@ -1,11 +1,52 @@
 import express from 'express';
 import Product from '../models/product.js';
 import mongoose from 'mongoose';
+import amqp from 'amqplib';
 
 const router = express.Router();
 
 // Helper to validate ObjectId
 const isValidObjectId = (id) => mongoose.isValidObjectId(id);
+
+
+// Connexion à RabbitMQ
+const connect = async () => {
+    try {
+        const connection = await amqp.connect('amqp://rabbitmq');
+        const channel = await connection.createChannel();
+        return channel;
+    } catch (error) {
+        console.error('Error connecting to RabbitMQ', error);
+    }
+}
+
+// Consommer le message pour mettre à jour le stock des produits
+const consumeMessage = async () => {
+    try {
+        const channel = await connect();
+        await channel.assertQueue('product_stock');
+        channel.consume('product_stock', async (msg) => {
+            if (msg !== null) {
+                const data = JSON.parse(msg.content.toString());
+                const productId = data.productId;
+                const quantity = data.quantity;
+                // Mettre à jour le stock du produit
+                const product = await Product.findById(productId);
+                if (product) {
+                    product.stock -= quantity;
+                    await product.save();
+                    console.log(`Stock decremented for product ${productId}`);
+                }
+                channel.ack(msg);
+            }
+        });
+    } catch (error) {
+        console.error('Error consuming message', error);
+    }
+}
+
+// Lorsque le serveur démarre, commencez à consommer des messages
+consumeMessage();
 
 // CREATE a new product
 router.post('/', async (req, res) => {
