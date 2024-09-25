@@ -1,11 +1,10 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const productRoutes = require('./routes/productRoute');
-const cors = require('cors');
+import express from 'express';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import productRoutes from './routes/productRoute.js'
+import cors from 'cors';
 
 const app = express();
-
 const port = process.env.PORT || 3502;
 
 // Middleware
@@ -28,7 +27,8 @@ mongoose.connect(process.env.MONGO_URL || 'mongodb://mongodb:27017/db_product')
        console.error('Error connecting to MongoDB', error);
    });
 
-// Start the server
 app.listen(port, () => {
    console.log(`Server is running on port ${port}`);
 });
+
+export default app;

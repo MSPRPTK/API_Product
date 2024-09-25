@@ -1,15 +1,20 @@
-const express = require('express');
+import express from 'express';
+import Product from '../models/product.js';
+import mongoose from 'mongoose';
+
 const router = express.Router();
-const Product = require('../models/product');
+
+// Helper to validate ObjectId
+const isValidObjectId = (id) => mongoose.isValidObjectId(id);
 
 // CREATE a new product
 router.post('/', async (req, res) => {
     try {
         const product = new Product(req.body);
         await product.save();
-        res.status(201).send(product);
+        return res.status(201).json(product);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).json(error);
     }
 });
 
@@ -17,49 +22,52 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const products = await Product.find();
-        res.status(200).send(products);
+        return res.status(200).json(products);
     } catch (error) {
-        res.status(500).send(error);
+        return res.status(500).json(error);
     }
 });
 
-// READ a single product by id
+// READ a single product by ID
 router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+        return res.status(404).json({ message: 'Invalid ID' });
+    }
+
     try {
-        const product = await Product.findById(req.params.id);
-        if (!product) {
-            return res.status(404).send();
-        }
-        res.status(200).send(product);
+        const product = await Product.findById(id);
+        return product ? res.status(200).json(product) : res.status(404).json({ message: 'Product not found' });
     } catch (error) {
-        res.status(500).send(error);
+        return res.status(500).json(error);
     }
 });
 
-// UPDATE a product by id
+// UPDATE a product by ID
 router.patch('/:id', async (req, res) => {
     try {
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-        if (!product) {
-            return res.status(404).send();
-        }
-        res.status(200).send(product);
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        return updatedProduct ? res.status(200).json(updatedProduct) : res.status(404).json({ message: 'Product not found' });
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).json(error);
     }
 });
 
-// DELETE a product by id
+// DELETE a product by ID
 router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+        return res.status(404).json({ message: 'Invalid ID' });
+    }
+
     try {
-        const product = await Product.findByIdAndDelete(req.params.id);
-        if (!product) {
-            return res.status(404).send();
-        }
-        res.status(200).send(product);
+        const deletedProduct = await Product.findByIdAndDelete(id);
+        return deletedProduct ? res.status(200).json(deletedProduct) : res.status(404).json({ message: 'Product not found' });
     } catch (error) {
-        res.status(500).send(error);
+        return res.status(500).json(error);
     }
 });
 
-module.exports = router;
+export default router;
